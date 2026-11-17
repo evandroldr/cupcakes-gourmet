@@ -9,7 +9,12 @@ const pool = mysql.createPool({
   ssl: process.env.DB_SSL === 'true' ? { minVersion: 'TLSv1.2', rejectUnauthorized: true } : undefined,
   connectionLimit: 5,
   enableKeepAlive: true,
-  decimalNumbers: true
+  decimalNumbers: true,
+  dateStrings: true
+});
+
+pool.on('connection', (conexao) => {
+  conexao.query("SET time_zone = '-03:00'");
 });
 
 module.exports = pool;

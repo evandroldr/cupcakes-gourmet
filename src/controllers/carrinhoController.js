@@ -1,24 +1,16 @@
 const Produto = require('../models/produtoModel');
+const { montarItens } = require('../helpers/carrinho');
 
 const lerCarrinho = (req) => req.session.carrinho || [];
 
 exports.ver = async (req, res) => {
   const carrinho = lerCarrinho(req);
-  const produtos = await Produto.buscarPorIds(carrinho.map((item) => item.id));
-  const itens = [];
-
-  carrinho.forEach((item) => {
-    const produto = produtos.find((p) => p.id === item.id);
-    if (produto) {
-      itens.push({ ...produto, quantidade: item.quantidade, subtotal: produto.preco * item.quantidade });
-    }
-  });
+  const { itens, total } = await montarItens(carrinho);
 
   if (itens.length !== carrinho.length) {
     req.session.carrinho = itens.map((item) => ({ id: item.id, quantidade: item.quantidade }));
   }
 
-  const total = itens.reduce((soma, item) => soma + item.subtotal, 0);
   res.render('carrinho', { titulo: 'Carrinho', itens, total });
 };
 

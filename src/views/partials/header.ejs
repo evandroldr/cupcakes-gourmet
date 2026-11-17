@@ -19,6 +19,11 @@
             <li class="nav-item">
               <a class="nav-link" href="/">Cardápio</a>
             </li>
+            <% if (usuario) { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/pedidos">Meus pedidos</a>
+            </li>
+            <% } %>
           </ul>
           <ul class="navbar-nav">
             <li class="nav-item">

@@ -3,6 +3,7 @@ require('dotenv').config({ quiet: true });
 const express = require('express');
 const path = require('path');
 const cookieSession = require('cookie-session');
+const formatos = require('./helpers/formatos');
 const routes = require('./routes');
 
 const app = express();
@@ -10,7 +11,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.locals.moeda = (valor) => Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+Object.assign(app.locals, formatos);
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.urlencoded({ extended: true }));

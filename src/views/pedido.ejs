@@ -1,0 +1,70 @@
+<%- include('partials/header') %>
+<%
+  const etapas = ['recebido', 'em_preparo', 'pronto', 'entregue'];
+  const feitas = pedido.historico.map((h) => h.status);
+  const faltam = pedido.status === 'cancelado' ? [] : etapas.filter((etapa) => !feitas.includes(etapa));
+%>
+
+<% if (novo) { %>
+<div class="text-center py-3 mb-3">
+  <h1 class="fs-2 fw-bold text-success">Pedido confirmado!</h1>
+  <p class="mb-0">Pagamento na loja: <strong><%= pagamentos[pedido.forma_pagamento] %></strong></p>
+</div>
+<% } %>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h2 class="fs-3 fw-bold mb-0">Pedido nº <%= pedido.id %></h2>
+    <small class="text-body-secondary">Feito em <%= dataHora(pedido.criado_em) %></small>
+  </div>
+  <span class="badge fs-6 text-bg-<%= status[pedido.status].cor %>"><%= status[pedido.status].texto %></span>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <h3 class="fs-5 fw-bold">Acompanhamento</h3>
+    <ul class="list-group">
+      <% pedido.historico.forEach((h) => { %>
+      <li class="list-group-item d-flex justify-content-between">
+        <span class="fw-bold"><%= status[h.status].texto %></span>
+        <small class="text-body-secondary"><%= dataHora(h.criado_em) %></small>
+      </li>
+      <% }) %>
+      <% faltam.forEach((etapa) => { %>
+      <li class="list-group-item text-body-tertiary"><%= status[etapa].texto %></li>
+      <% }) %>
+    </ul>
+    <a href="/pedidos/<%= pedido.id %>" class="btn btn-outline-primary w-100 mt-3">Atualizar status</a>
+  </div>
+
+  <div class="col-md-6">
+    <h3 class="fs-5 fw-bold">Itens</h3>
+    <div class="card bg-body-tertiary mb-3">
+      <div class="card-body">
+        <% pedido.itens.forEach((item) => { %>
+        <div class="d-flex justify-content-between mb-1">
+          <span><%= item.quantidade %>x <%= item.nome %></span>
+          <span><%= moeda(item.quantidade * item.preco_unitario) %></span>
+        </div>
+        <% }) %>
+        <div class="d-flex justify-content-between mb-1">
+          <span>Entrega</span>
+          <span class="text-success fw-bold"><%= pedido.taxa_entrega > 0 ? moeda(pedido.taxa_entrega) : 'Grátis' %></span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fs-5 fw-bold">
+          <span>Total</span>
+          <span class="text-primary"><%= moeda(pedido.total) %></span>
+        </div>
+      </div>
+    </div>
+
+    <% if (pedido.modalidade === 'entrega') { %>
+    <p class="small mb-1">Entrega em: <%= pedido.logradouro %>, <%= pedido.numero %> <%= pedido.complemento %> - <%= pedido.bairro %> - <%= pedido.cidade %>/<%= pedido.estado %></p>
+    <% } else { %>
+    <p class="small mb-1">Retirada na loja em <%= dataHora(pedido.data_retirada) %></p>
+    <% } %>
+    <p class="small">Pagamento na loja: <%= pagamentos[pedido.forma_pagamento] %></p>
+  </div>
+</div>
+<%- include('partials/footer') %>
