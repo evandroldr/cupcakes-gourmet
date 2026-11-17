@@ -23,6 +23,7 @@ app.use(cookieSession({
 app.use((req, res, next) => {
   res.locals.usuario = req.session.usuario;
   res.locals.mensagem = req.session.mensagem;
+  res.locals.qtdCarrinho = (req.session.carrinho || []).reduce((soma, item) => soma + item.quantidade, 0);
   delete req.session.mensagem;
   next();
 });

@@ -18,3 +18,11 @@ exports.buscarPorId = async (id) => {
   const [produtos] = await db.query('SELECT * FROM produtos WHERE id = ? AND ativo = TRUE', [id]);
   return produtos[0];
 };
+
+exports.buscarPorIds = async (ids) => {
+  if (ids.length === 0) {
+    return [];
+  }
+  const [produtos] = await db.query('SELECT * FROM produtos WHERE ativo = TRUE AND id IN (?)', [ids]);
+  return produtos;
+};
