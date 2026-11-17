@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Cardápio</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><%= produto.nome %></li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <img src="<%= produto.imagem_url || '/img/sem-foto.svg' %>" class="img-fluid rounded w-100" alt="<%= produto.nome %>">
+  </div>
+  <div class="col-md-6">
+    <h1 class="fs-2 fw-bold"><%= produto.nome %></h1>
+    <p class="fs-3 fw-bold text-primary mb-2"><%= moeda(produto.preco) %></p>
+    <% if (produto.estoque > 0) { %>
+    <span class="badge text-bg-success mb-3">Disponível</span>
+    <% } else { %>
+    <span class="badge text-bg-secondary mb-3">Indisponível</span>
+    <% } %>
+
+    <p><%= produto.descricao %></p>
+
+    <h2 class="fs-6 fw-bold mt-4">Ingredientes</h2>
+    <p class="text-body-secondary"><%= produto.ingredientes %></p>
+
+    <% if (produto.alergenicos) { %>
+    <h2 class="fs-6 fw-bold">Alergênicos</h2>
+    <p class="text-body-secondary"><%= produto.alergenicos %></p>
+    <% } %>
+  </div>
+</div>
+<%- include('partials/footer') %>

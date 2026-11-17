@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+<form class="d-flex mb-4" role="search" action="/" method="get">
+  <input class="form-control me-2" type="search" name="busca" placeholder="Buscar cupcake..." aria-label="Buscar" value="<%= busca %>">
+  <button class="btn btn-outline-primary" type="submit">Buscar</button>
+</form>
+
+<% if (!busca) { %>
+<div class="p-4 mb-4 bg-body-tertiary rounded-3">
+  <h1 class="fs-3 fw-bold text-primary">Frete grátis</h1>
+  <p class="mb-0">Promoção de lançamento em todos os pedidos com entrega.</p>
+</div>
+<% } %>
+
+<% if (produtos.length === 0) { %>
+<div class="alert alert-info" role="alert">
+  <% if (busca) { %>
+    Nenhum cupcake encontrado para a busca. <a href="/" class="alert-link">Ver todos</a>
+  <% } else { %>
+    Nenhum produto disponível no momento.
+  <% } %>
+</div>
+<% } %>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+  <% produtos.forEach((produto) => { %>
+  <div class="col">
+    <div class="card h-100">
+      <img src="<%= produto.imagem_url || '/img/sem-foto.svg' %>" class="card-img-top" alt="<%= produto.nome %>">
+      <div class="card-body">
+        <h5 class="card-title"><%= produto.nome %></h5>
+        <p class="card-text fw-bold text-primary"><%= moeda(produto.preco) %></p>
+        <% if (produto.estoque > 0) { %>
+        <span class="badge text-bg-success">Disponível</span>
+        <% } else { %>
+        <span class="badge text-bg-secondary">Indisponível</span>
+        <% } %>
+      </div>
+      <div class="card-footer bg-transparent border-0 pb-3">
+        <a href="/produtos/<%= produto.id %>" class="btn btn-outline-primary btn-sm w-100">Ver detalhes</a>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<%- include('partials/footer') %>

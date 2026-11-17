@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <h1 class="fs-2 fw-bold mb-4">Criar conta</h1>
+
+    <form action="/cadastro" method="post" novalidate>
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome completo</label>
+        <input type="text" class="form-control <%= erros.nome ? 'is-invalid' : '' %>" id="nome" name="nome" value="<%= dados.nome || '' %>">
+        <div class="invalid-feedback"><%= erros.nome %></div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" class="form-control <%= erros.email ? 'is-invalid' : '' %>" id="email" name="email" value="<%= dados.email || '' %>">
+        <div class="invalid-feedback"><%= erros.email %></div>
+      </div>
+      <div class="mb-3">
+        <label for="telefone" class="form-label">Telefone</label>
+        <input type="tel" class="form-control <%= erros.telefone ? 'is-invalid' : '' %>" id="telefone" name="telefone" placeholder="(11) 99999-9999" value="<%= dados.telefone || '' %>">
+        <div class="invalid-feedback"><%= erros.telefone %></div>
+      </div>
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input type="password" class="form-control <%= erros.senha ? 'is-invalid' : '' %>" id="senha" name="senha" placeholder="Mínimo de 6 caracteres">
+        <div class="invalid-feedback"><%= erros.senha %></div>
+      </div>
+      <div class="mb-3">
+        <label for="confirmacao" class="form-label">Confirmar senha</label>
+        <input type="password" class="form-control <%= erros.confirmacao ? 'is-invalid' : '' %>" id="confirmacao" name="confirmacao">
+        <div class="invalid-feedback"><%= erros.confirmacao %></div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+    </form>
+
+    <p class="text-center mt-4">Já tem conta? <a href="/login" class="fw-bold">Entrar</a></p>
+  </div>
+</div>
+<%- include('partials/footer') %>

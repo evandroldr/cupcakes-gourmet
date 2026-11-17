@@ -1,0 +1,36 @@
+:root {
+  --bs-primary: #6d2e46;
+  --bs-primary-rgb: 109, 46, 70;
+  --bs-link-color-rgb: 109, 46, 70;
+  --bs-link-hover-color-rgb: 87, 37, 56;
+}
+
+.btn-primary {
+  --bs-btn-bg: #6d2e46;
+  --bs-btn-border-color: #6d2e46;
+  --bs-btn-hover-bg: #572538;
+  --bs-btn-hover-border-color: #572538;
+  --bs-btn-active-bg: #4a1f30;
+  --bs-btn-active-border-color: #4a1f30;
+  --bs-btn-disabled-bg: #6d2e46;
+  --bs-btn-disabled-border-color: #6d2e46;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: #6d2e46;
+  --bs-btn-border-color: #6d2e46;
+  --bs-btn-hover-bg: #6d2e46;
+  --bs-btn-hover-border-color: #6d2e46;
+  --bs-btn-active-bg: #6d2e46;
+  --bs-btn-active-border-color: #6d2e46;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  color: #6d2e46;
+}
+
+.card-img-top {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
