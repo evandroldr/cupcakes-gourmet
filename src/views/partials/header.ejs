@@ -19,7 +19,17 @@
             <li class="nav-item">
               <a class="nav-link" href="/">Cardápio</a>
             </li>
-            <% if (usuario) { %>
+            <% if (usuario && usuario.perfil === 'admin') { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/pedidos">Pedidos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/produtos">Produtos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/estoque">Estoque</a>
+            </li>
+            <% } else if (usuario) { %>
             <li class="nav-item">
               <a class="nav-link" href="/pedidos">Meus pedidos</a>
             </li>

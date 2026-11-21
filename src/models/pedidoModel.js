@@ -92,3 +92,50 @@ exports.buscarPorId = async (id) => {
   pedido.total = itens.reduce((soma, item) => soma + item.quantidade * item.preco_unitario, 0) + pedido.taxa_entrega;
   return pedido;
 };
+
+exports.listarTodos = async (status) => {
+  const params = [];
+  let filtro = '';
+
+  if (status) {
+    filtro = 'WHERE p.status = ?';
+    params.push(status);
+  }
+
+  const [pedidos] = await db.query(
+    `SELECT p.id, p.status, p.modalidade, p.forma_pagamento, p.criado_em, u.nome AS cliente,
+            SUM(i.quantidade * i.preco_unitario) + p.taxa_entrega AS total
+     FROM pedidos p
+     JOIN usuarios u ON u.id = p.usuario_id
+     JOIN itens_pedido i ON i.pedido_id = p.id
+     ${filtro}
+     GROUP BY p.id, p.status, p.modalidade, p.forma_pagamento, p.criado_em, u.nome, p.taxa_entrega
+     ORDER BY p.status IN ('entregue', 'cancelado'), p.id`,
+    params
+  );
+  return pedidos;
+};
+
+exports.alterarStatus = async (id, status, usuarioId) => {
+  const conexao = await db.getConnection();
+
+  try {
+    await conexao.beginTransaction();
+    await conexao.query('UPDATE pedidos SET status = ? WHERE id = ?', [status, id]);
+    await conexao.query('INSERT INTO historico_status (pedido_id, usuario_id, status) VALUES (?, ?, ?)', [id, usuarioId, status]);
+
+    if (status === 'cancelado') {
+      await conexao.query(
+        'UPDATE produtos p JOIN itens_pedido i ON i.produto_id = p.id SET p.estoque = p.estoque + i.quantidade WHERE i.pedido_id = ?',
+        [id]
+      );
+    }
+
+    await conexao.commit();
+  } catch (erro) {
+    await conexao.rollback();
+    throw erro;
+  } finally {
+    conexao.release();
+  }
+};

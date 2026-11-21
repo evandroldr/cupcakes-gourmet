@@ -1,0 +1,96 @@
+<%- include('../partials/header') %>
+<h1 class="fs-2 fw-bold mb-3">Estoque</h1>
+
+<div class="table-responsive mb-4">
+  <table class="table align-middle">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Produto</th>
+        <th scope="col">Estoque</th>
+        <th scope="col">Situação</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% produtos.forEach((produto) => { %>
+      <tr>
+        <td><%= produto.nome %></td>
+        <td><%= produto.estoque %></td>
+        <td>
+          <% if (produto.estoque > 0) { %>
+          <span class="badge text-bg-success">Disponível</span>
+          <% } else { %>
+          <span class="badge text-bg-secondary">Indisponível</span>
+          <% } %>
+        </td>
+        <td>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#ajuste<%= produto.id %>">Ajustar</button>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<h2 class="fs-5 fw-bold">Últimas movimentações</h2>
+<% if (movimentacoes.length === 0) { %>
+<p class="text-body-secondary">Nenhum ajuste registrado.</p>
+<% } else { %>
+<div class="table-responsive">
+  <table class="table table-sm">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Data</th>
+        <th scope="col">Produto</th>
+        <th scope="col">De</th>
+        <th scope="col">Para</th>
+        <th scope="col">Justificativa</th>
+        <th scope="col">Usuário</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% movimentacoes.forEach((m) => { %>
+      <tr>
+        <td><%= dataHora(m.criado_em) %></td>
+        <td><%= m.produto %></td>
+        <td><%= m.quantidade_anterior %></td>
+        <td><%= m.quantidade_nova %></td>
+        <td><%= m.justificativa %></td>
+        <td><%= m.usuario %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% produtos.forEach((produto) => { %>
+<div class="modal fade" id="ajuste<%= produto.id %>" tabindex="-1" aria-labelledby="titulo<%= produto.id %>" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/admin/estoque/<%= produto.id %>" method="post">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="titulo<%= produto.id %>">Ajustar estoque - <%= produto.nome %></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-body-secondary">Estoque atual: <%= produto.estoque %></p>
+          <div class="mb-3">
+            <label for="quantidade<%= produto.id %>" class="form-label">Nova quantidade *</label>
+            <input type="number" class="form-control" id="quantidade<%= produto.id %>" name="quantidade" min="0" required>
+          </div>
+          <div class="mb-3">
+            <label for="justificativa<%= produto.id %>" class="form-label">Justificativa *</label>
+            <input type="text" class="form-control" id="justificativa<%= produto.id %>" name="justificativa" maxlength="255" placeholder="Ex.: nova fornada" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% }) %>
+<%- include('../partials/footer') %>

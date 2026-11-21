@@ -8,3 +8,14 @@ exports.exigirLogin = (req, res, next) => {
   }
   next();
 };
+
+exports.exigirAdmin = (req, res, next) => {
+  if (!req.session.usuario) {
+    return exports.exigirLogin(req, res, next);
+  }
+  if (req.session.usuario.perfil !== 'admin') {
+    req.session.mensagem = { tipo: 'danger', texto: 'Acesso restrito ao administrador.' };
+    return res.redirect('/');
+  }
+  next();
+};

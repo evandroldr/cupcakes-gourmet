@@ -5,7 +5,7 @@ const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const entrar = (req, res, usuario) => {
   req.session.usuario = { id: usuario.id, nome: usuario.nome, perfil: usuario.perfil };
-  const destino = req.session.voltarPara || '/';
+  const destino = req.session.voltarPara || (usuario.perfil === 'admin' ? '/admin/pedidos' : '/');
   delete req.session.voltarPara;
   res.redirect(destino);
 };

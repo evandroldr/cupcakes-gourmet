@@ -1,0 +1,92 @@
+<%- include('../partials/header') %>
+<div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+  <h1 class="fs-2 fw-bold mb-0">Pedido nº <%= pedido.id %></h1>
+  <span class="badge fs-6 text-bg-<%= status[pedido.status].cor %>"><%= status[pedido.status].texto %></span>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card bg-body-tertiary mb-4">
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Cliente</dt>
+          <dd class="col-sm-8"><%= pedido.cliente %> - <%= pedido.telefone %></dd>
+          <dt class="col-sm-4">Data</dt>
+          <dd class="col-sm-8"><%= dataHora(pedido.criado_em) %></dd>
+          <dt class="col-sm-4">Modalidade</dt>
+          <dd class="col-sm-8"><%= pedido.modalidade === 'entrega' ? 'Entrega' : 'Retirada na loja' %></dd>
+          <% if (pedido.modalidade === 'entrega') { %>
+          <dt class="col-sm-4">Endereço</dt>
+          <dd class="col-sm-8"><%= pedido.logradouro %>, <%= pedido.numero %> <%= pedido.complemento %> - <%= pedido.bairro %> - <%= pedido.cidade %>/<%= pedido.estado %> - CEP <%= pedido.cep %></dd>
+          <% } else { %>
+          <dt class="col-sm-4">Retirada</dt>
+          <dd class="col-sm-8"><%= dataHora(pedido.data_retirada) %></dd>
+          <% } %>
+          <dt class="col-sm-4">Pagamento na loja</dt>
+          <dd class="col-sm-8 mb-0"><%= pagamentos[pedido.forma_pagamento] %></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Produto</th>
+            <th scope="col">Qtd</th>
+            <th scope="col">Preço</th>
+            <th scope="col">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pedido.itens.forEach((item) => { %>
+          <tr>
+            <td><%= item.nome %></td>
+            <td><%= item.quantidade %></td>
+            <td><%= moeda(item.preco_unitario) %></td>
+            <td><%= moeda(item.quantidade * item.preco_unitario) %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-end fs-5 fw-bold text-primary">Total: <%= moeda(pedido.total) %></p>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="fs-5 fw-bold">Alterar status</h2>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <% if (proximo) { %>
+          <form action="/admin/pedidos/<%= pedido.id %>/status" method="post">
+            <input type="hidden" name="status" value="<%= proximo %>">
+            <button type="submit" class="btn btn-primary">Marcar como <%= status[proximo].texto %></button>
+          </form>
+          <% } %>
+          <% if (!['entregue', 'cancelado'].includes(pedido.status)) { %>
+          <form action="/admin/pedidos/<%= pedido.id %>/status" method="post" onsubmit="return confirm('Deseja cancelar este pedido? Os itens voltarão para o estoque.')">
+            <input type="hidden" name="status" value="cancelado">
+            <button type="submit" class="btn btn-outline-danger">Cancelar pedido</button>
+          </form>
+          <% } %>
+          <% if (!proximo && ['entregue', 'cancelado'].includes(pedido.status)) { %>
+          <p class="text-body-secondary mb-0">Pedido finalizado.</p>
+          <% } %>
+        </div>
+
+        <h2 class="fs-6 fw-bold">Histórico</h2>
+        <ul class="list-group list-group-flush">
+          <% pedido.historico.forEach((h) => { %>
+          <li class="list-group-item px-0 small">
+            <%= dataHora(h.criado_em) %> - <strong><%= status[h.status].texto %></strong> - <%= h.usuario %>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="/admin/pedidos" class="btn btn-outline-primary mt-3">Voltar</a>
+<%- include('../partials/footer') %>
